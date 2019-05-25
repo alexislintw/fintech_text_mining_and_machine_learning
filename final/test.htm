@@ -2,15 +2,17 @@
   <head>
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
-
-    
+        var group_list;
         $.ajax({
             type: "GET",
             url: "./data/all_groups.csv",
             dataType: "text",
-            success: function(data) {alert('ok')}
+            success: function(data) {
+                //group_list = data;
+                alert(data)
+            }
          });
     
         
