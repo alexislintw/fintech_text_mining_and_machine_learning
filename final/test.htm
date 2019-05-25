@@ -2,8 +2,18 @@
   <head>
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
 
+    
+        $.ajax({
+            type: "GET",
+            url: "./data/all_groups.csv",
+            dataType: "text",
+            success: function(data) {alert('ok')}
+         });
+    
+        
       // Load the Visualization API and the corechart package.
       google.charts.load('current', {'packages':['corechart']});
 
@@ -13,6 +23,7 @@
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
+        
       function drawChart() {
 
         // Create the data table.
@@ -28,7 +39,7 @@
         ]);
 
         // Set chart options
-        var options = {'title':'How Much Pizza I Ate Last Night',
+        var options = {'title':'Investment Postion',
                        'width':400,
                        'height':300};
 
@@ -40,6 +51,7 @@
   </head>
 
   <body>
+    <h1>ETF Investment Profolio</h1>
     <!--Div that will hold the pie chart-->
     <div id="chart_div"></div>
   </body>
