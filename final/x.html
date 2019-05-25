@@ -12,7 +12,7 @@
         dataType: "text",       
         success: function(response) {
             arr_etf = $.csv.toArrays(response);
-            alert(arr_etf[0][0]);
+            alert(arr_etf.count);
         }   
     });
         
@@ -32,13 +32,7 @@
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Topping');
         data.addColumn('number', 'Slices');
-        data.addRows([
-          ['Mushrooms', 3],
-          ['Onions', 1],
-          ['Olives', 1],
-          ['Zucchini', 1],
-          ['Pepperoni', 2]
-        ]);
+        data.addRows(arr_etf);
 
         // Set chart options
         var options = {'title':'Investment Postion',
