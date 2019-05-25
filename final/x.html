@@ -12,6 +12,7 @@
         dataType: "text",       
         success: function(response) {
             arr_etf = $.csv.toArrays(response);
+            alert(arr_etf.count);
         }   
     });
         
@@ -31,7 +32,7 @@
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Topping');
         data.addColumn('number', 'Slices');
-        data.addRows(arr_etf);
+        data.addRows([]);
 
         // Set chart options
         var options = {'title':'Investment Postion',
