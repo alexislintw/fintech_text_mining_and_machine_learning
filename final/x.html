@@ -8,11 +8,11 @@
     var arr_etf;
     $.ajax({
         type: "GET",  
-        url: "data/all_groups.csv",
+        url: "./data/all_groups.csv",
         dataType: "text",       
         success: function(response) {
             arr_etf = $.csv.toArrays(response);
-            alert(arr_etf[0]);
+            alert(arr_etf[0][0]);
         }   
     });
         
