@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
+    <script type="text/javascript">
+    
+    var arrPieChartData = [];
+    var arrTableData = [];
+    loadData();
+        
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawPieChart);
+
+    google.charts.load('current', {'packages':['table']});
+    google.charts.setOnLoadCallback(drawTable);
+
+    function loadData() {
+        $.ajax({
+            type: "GET",  
+            url: "./data/profolio.csv",
+            dataType: "text",       
+            success: function(response) {
+                var arrDataTemp = $.csv.toArrays(response);
+                for(var i=0; i<arrDataTemp.length; i++) {
+                    group_id = arrDataTemp[i][0];
+                    group_name = arrDataTemp[i][1];
+                    group_weight = parseInt(arrDataTemp[i][2]);
+                    link = '<a href="single.htm?gid='+group_id+'" target="_blank">detail</a>';
+                    arrPieChartData.push([group_name,group_weight]);
+                    arrTableData.push([group_name,group_weight,link]);
+                    //arrTableData[i][0] = arrDataTemp[i][0];
+                    //arrTableData[i][1] = 
+                } 
+            }   
+        });
+    }
+   
+    function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'ETF Group');
+        data.addColumn('number', 'Weight');
+        data.addColumn('string', 'Detail');
+        data.addRows(arrTableData);
+        var options = {
+            allowHtml: true,
+            showRowNumber: true,
+            width: 800,
+            height: 1000
+        }
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(data, options);
+    }
+        
+    function drawPieChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        data.addRows(arrPieChartData);
+        var options = {'title':'Investment Postion',
+                       'width':800,
+                       'height':600};
+        var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
+        chart.draw(data, options);
+    }
+    </script>
+  </head>
+
+  <body>
+    <div id='custom-title'>- ETF Investment Profolio -</div>
+    <div class="space"></div>
+    <div id="pie_chart_div"></div>
+    <div class="space"></div>
+    <div class="custom-head"><h3>Group List and Risk Index</h3></div>
+    <div id="table_div"></div>
+  </body>
+</html>

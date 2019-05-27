@@ -1,0 +1,85 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
+    <script type="text/javascript">
+    console.log('test123');
+    var url_string = window.location.href
+    var url = new URL(url_string);
+    var gid = url.searchParams.get("gid");
+
+    var arrGroupList;
+    loadGroupList();
+
+    var arrEtfList;
+    var fileName = getGroupName(gid);
+    loadData(fileName);
+
+    google.charts.load('current', {'packages':['table']});
+    google.charts.setOnLoadCallback(drawTable);
+        
+    function loadGroupList() {
+        $.ajax({
+            async: false,
+            type: "GET",  
+            url: "./data/profolio.csv",
+            dataType: "text",       
+            success: function(response) {
+                arrGroupList = $.csv.toArrays(response);
+            }   
+        });
+    }
+        
+    function loadData(fileName) {
+        $.ajax({
+            async: false,
+            type: "GET",  
+            url: "./riskiness_r/"+fileName+".csv",
+            dataType: "text",       
+            success: function(response) {
+                arrEtfList = $.csv.toArrays(response);
+                for(var i=0; i<arrEtfList.length; i++) {
+                    arrEtfList[i][1] = parseFloat(arrEtfList[i][1]);
+                } 
+            }   
+        });
+    }
+        
+    function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'ETF Name');
+        data.addColumn('number', 'Riskiness R');
+        data.addRows(arrEtfList);
+        var options = {
+            showRowNumber: true,
+            width: 800,
+            height: 600
+        }
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(data, options);
+    }
+    
+    function getGroupName(groupId) {
+        if(arrGroupList != undefined) {
+            for(var i=0; i<arrGroupList.length; i++) {
+                if(arrGroupList[i][0] == groupId) {
+                    return arrGroupList[i][1];
+                }
+            }
+        }
+        else {
+            return null;
+        }
+    }
+        
+    </script>
+  </head>
+
+  <body>
+    <div id='custom-title'>- ETF Investment Profolio -</div>
+    <div class="space"></div>
+    <div id="table_div"></div>
+  </body>
+</html>
