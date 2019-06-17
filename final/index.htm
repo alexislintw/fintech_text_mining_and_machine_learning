@@ -8,7 +8,7 @@
     
     var arrPieChartData = [];
     var arrTableData = [];
-    loadData();
+    loadData('2019-04');
         
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawPieChart);
@@ -16,22 +16,26 @@
     google.charts.load('current', {'packages':['table']});
     google.charts.setOnLoadCallback(drawTable);
 
-    function loadData() {
+    function loadData(month) {
+        arrPieChartData = [];
+        arrTableData = [];
+        
         $.ajax({
-            type: "GET",  
-            url: "./data/profolio.csv",
+            type: "GET",
+            async: false,
+            url: "./data/" + month + "/top5_group.csv",
             dataType: "text",       
             success: function(response) {
                 var arrDataTemp = $.csv.toArrays(response);
-                for(var i=0; i<arrDataTemp.length; i++) {
-                    group_id = arrDataTemp[i][0];
-                    group_name = arrDataTemp[i][1];
-                    group_weight = parseInt(arrDataTemp[i][2]);
-                    link = '<a href="single.htm?gid='+group_id+'" target="_blank">detail</a>';
+                for(var i=1; i<arrDataTemp.length; i++) {
+                    //group_id = arrDataTemp[i][0];
+                    group_name = arrDataTemp[i][0];
+                    riskiness_r = parseFloat(arrDataTemp[i][1]);
+                    group_weight = parseInt(arrDataTemp[i][2]*100);
+                    //alert(group_weight);
+                    link = '<a href="detail.htm?g='+group_name+'" target="_blank">detail</a>';
                     arrPieChartData.push([group_name,group_weight]);
-                    arrTableData.push([group_name,group_weight,link]);
-                    //arrTableData[i][0] = arrDataTemp[i][0];
-                    //arrTableData[i][1] = 
+                    arrTableData.push([group_name,riskiness_r,group_weight]);
                 } 
             }   
         });
@@ -40,14 +44,15 @@
     function drawTable() {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'ETF Group');
-        data.addColumn('number', 'Weight');
-        data.addColumn('string', 'Detail');
+        data.addColumn('number', 'Riskiness R');
+        data.addColumn('number', 'Weight(%)');
+        //data.addColumn('string', 'Detail');
         data.addRows(arrTableData);
         var options = {
             allowHtml: true,
             showRowNumber: true,
             width: 800,
-            height: 1000
+            height: 300
         }
         var table = new google.visualization.Table(document.getElementById('table_div'));
         table.draw(data, options);
@@ -60,16 +65,40 @@
         data.addRows(arrPieChartData);
         var options = {'title':'Investment Postion',
                        'width':800,
-                       'height':600};
+                       'height':400};
         var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
         chart.draw(data, options);
     }
+        
+    function changeSelectedMonth() {
+        var sel = document.getElementById('profolio_month');
+        //alert(sel.value);
+        var month = '2019-0' + sel.value;
+        refreshChartsWithMonth(month);
+    }
+        
+    function refreshChartsWithMonth(month) {
+        loadData(month);
+        drawPieChart();
+        drawTable();
+    }
+        
     </script>
   </head>
 
   <body>
     <div id='custom-title'>- ETF Investment Profolio -</div>
     <div class="space"></div>
+    <div id="custom-select">
+      <select id="profolio_month" onchange="changeSelectedMonth()">
+        <option value="0">Select Month</option>
+        <option value="1">Jan 2019</option>
+        <option value="2">Feb 2019</option>
+        <option value="3">Mar 2019</option>
+        <option value="4">Apr 2019</option>
+      </select>
+    </div>
+    <div class="custom-head"><h3>Portfolio Pie Chart</h3></div>
     <div id="pie_chart_div"></div>
     <div class="space"></div>
     <div class="custom-head"><h3>Group List and Risk Index</h3></div>
