@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
+    <script type="text/javascript">
+    
+    var url_string = window.location.href
+    var url = new URL(url_string);
+    var m = url.searchParams.get("m");
+    var g = url.searchParams.get("g");
+    var etf = url.searchParams.get("etf");
+    
+    var arrChartData = [];
+    loadData(m,g,etf);
+    
+    google.charts.load('current', {'packages':['line']});
+    google.charts.setOnLoadCallback(drawChart);
+        
+    function loadData(m,g,etf) {
+        $.ajax({
+            async: false,
+            type: "GET",  
+            url: "./2014to2018RE_data_weekly/"+g+"/"+g+"_return.csv",
+            dataType: "text",       
+            success: function(response) {
+            	var etf_index;
+                var arrDataTemp = $.csv.toArrays(response);
+                for(var i=2; i<arrDataTemp[0].length; i++) {
+                	if(etf == arrDataTemp[0][i]) {
+                		etf_index = i;
+                	}
+                }
+                if(etf_index >0) {
+                	for(var i=1; i<arrDataTemp.length; i++) {
+                		weekly_date = arrDataTemp[i][1];
+                    	weekly_return = parseFloat(arrDataTemp[i][etf_index]);
+                    	arrChartData.push([weekly_date,weekly_return]);
+                	}
+                }
+            }   
+        });
+    }
+        
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Date');
+      	data.addColumn('number', 'Weekly Return');
+        data.addRows(arrChartData);
+        var options = {
+            chart: {
+          		title: 'ETF Weekly Return',
+          		subtitle: 'in millions of dollars (USD)'
+        	},
+            width: 800,
+            height: 400
+        }
+        var chart = new google.charts.Line(document.getElementById('linechart_div'));
+      	chart.draw(data, google.charts.Line.convertOptions(options));
+    }    
+    </script>
+  </head>
+  <body>
+    <div id='custom-title'>- ETF Investment Profolio -</div>
+    <div class="space"></div>
+    <div class="custom-head" id="etf_name"></div>
+    <div id="linechart_div"></div>
+  </body>
+  <script type="text/javascript">
+    var e = document.getElementById('etf_name');
+    e.innerHTML = etf;   
+  </script> 
+</html>

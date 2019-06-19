@@ -16,6 +16,12 @@
     border: 1px solid #3261E9;
 }
 
+#linechart_div {
+    margin: auto;
+    width: 800px;
+    border: 0px solid #3261E9;
+}
+
 .custom-hr {
     margin: auto;
     width:800px;
@@ -46,6 +52,13 @@
 }
 
 .custom-head {
+    margin: auto;
+    width: 800px;
+    height: 40px;
+    border: 0px solid black;
+}
+
+#changed_weight {
     margin: auto;
     width: 800px;
     height: 40px;
