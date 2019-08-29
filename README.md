@@ -7,3 +7,7 @@
 ### 程式碼
 - 爬蟲：crawler/techorange_crawler.ipynb
 - 文字雲：demo/demo_word_cloud.ipynb
+
+### 文字雲輸出結果
+![文字雲輸出](./output/cloud.png)
+
